@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 9: Enum in Path Parameters — FastAPI Notes</title>
+  <meta name="description" content="Enum in FastAPI Path Parameters — restricting values, Python Enum class, str+Enum, conditional logic, Swagger dropdown, Flask comparison." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header"><h6>📚 Chapters</h6><div class="sidebar-progress">Chapter 9 of 12</div></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link active"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 9</div>
+      <h1>5. Enum in Path Parameters</h1>
+      <p class="chapter-subtitle">Restrict Allowed Values · Python Enum · str+Enum · Conditional Logic · Swagger Dropdown</p>
+    </div>
+
+    <!-- Concept -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 1. Restrict Allowed Values (Concept)</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-info">
+          <strong>✅ Definition</strong>
+          Enum path parameters allow you to restrict a path parameter to a <strong>fixed set of values</strong> instead of accepting anything.
+        </div>
+        <h3 class="subsection-title">🧠 Why Needed?</h3>
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">❌ Without Enum (accepts anything)</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/models/{model_name}")
+def get_model(model_name: str):
+    ...  # accepts: /models/gpt
+         # accepts: /models/random
+         # accepts: /models/xyz123 ← invalid!</code></pre>
+              </div>
+              <div class="nb-callout nb-callout-danger" style="margin-top:.5rem">
+                <strong>❌ Problem:</strong>
+                No control over valid inputs. Invalid values reach your logic.
+              </div>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">✅ With Enum (only predefined values)</div>
+            <div class="nb-card-body">
+              <div class="mental-model">
+                /models/<span class="mm-good">gpt</span>    ✅
+                /models/<span class="mm-good">bert</span>   ✅
+                /models/<span class="mm-good">resnet</span> ✅
+                /models/<span class="mm-bad">random</span> ❌ auto error
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Using Python Enum -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 2. Using Python Enum</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from fastapi import FastAPI
+from enum import Enum
+
+app = FastAPI()
+
+class ModelName(str, Enum):
+    gpt = "gpt"
+    bert = "bert"
+    resnet = "resnet"
+
+@app.get("/models/{model_name}")
+def get_model(model_name: ModelName):
+    return {"model_name": model_name}</code></pre>
+        </div>
+
+        <h3 class="subsection-title">🧠 Deep Explanation — Step by Step</h3>
+
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-info">
+              <strong>Step 1: Import Enum</strong>
+              <code>from enum import Enum</code>
+              <p style="margin:0">Python's built-in Enum: Used to define fixed constant values</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-warning">
+              <strong>Step 2: Define Enum Class</strong>
+              <code>class ModelName(str, Enum):</code>
+              <p style="margin:.25rem 0 0"><strong>🔥 Why str, Enum?</strong></p>
+              <ul class="nb-ul" style="margin-bottom:0">
+                <li>Enum → makes it enumeration</li>
+                <li>str → ensures values behave like strings</li>
+                <li>URL parameters are strings</li>
+                <li>FastAPI expects string-compatible values</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-tip">
+              <strong>Step 3: Define Allowed Values</strong>
+              <pre style="margin:.25rem 0 0;background:#1a1a2e;color:#e2e8f0;padding:.5rem;border-radius:3px;font-size:.85rem">gpt = "gpt"
+bert = "bert"
+resnet = "resnet"</pre>
+              <p style="margin:.25rem 0 0">👉 Now only these values are valid</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-tip">
+              <strong>Step 4: Use in Route</strong>
+              <code>def get_model(model_name: ModelName):</code>
+              <ul class="nb-ul" style="margin-bottom:0">
+                <li>FastAPI automatically validates input</li>
+                <li>Converts string → Enum member</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Internal Working -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 3. What Happens Internally</div>
+      <div class="nb-card-body">
+        <div class="mental-model">
+          Request: <span class="mm-highlight">GET /models/gpt</span>
+          
+          FastAPI:
+          1. Extracts → <span class="mm-highlight">"gpt"</span>
+          2. Matches with Enum
+          3. Converts to → <span class="mm-good">ModelName.gpt</span>
+          
+          Response: {"model_name": "gpt"}
+        </div>
+      </div>
+    </div>
+
+    <!-- Invalid Input Handling -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔹 4. Invalid Input Handling</div>
+      <div class="nb-card-body">
+        <p>Request: <code>GET /models/random</code></p>
+        <div class="nb-callout nb-callout-danger">
+          <strong>❌ Auto Response:</strong>
+          <pre style="margin:.25rem 0 0;background:#1a1a2e;color:#e2e8f0;padding:.75rem;border-radius:3px;font-size:.875rem">{
+  "detail": [
+    {
+      "msg": "value is not a valid enumeration member"
+    }
+  ]
+}</pre>
+        </div>
+        <div class="nb-callout nb-callout-tip mt-1" style="margin-top:.75rem">
+          <strong>🔥 Important Insight — Validation happens:</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>Before function execution</li>
+            <li>Automatically</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accessing Enum Values -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">🔹 5. Accessing Enum Values</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/models/{model_name}")
+def get_model(model_name: ModelName):
+    return {
+        "name": model_name,
+        "value": model_name.value
+    }</code></pre>
+        </div>
+        <div class="nb-table-wrapper mt-1" style="margin-top:1rem">
+          <table class="nb-table">
+            <thead><tr><th>Expression</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>model_name</code></td><td>Enum object</td></tr>
+              <tr><td><code>model_name.value</code></td><td>Actual string</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conditional Logic -->
+    <div class="nb-card">
+      <div class="nb-card-header purple">🔹 6. Conditional Logic with Enum</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/models/{model_name}")
+def get_model(model_name: ModelName):
+
+    if model_name == ModelName.gpt:
+        return {"type": "LLM", "info": "Language model"}
+
+    elif model_name == ModelName.bert:
+        return {"type": "NLP", "info": "Bidirectional encoder"}
+
+    elif model_name == ModelName.resnet:
+        return {"type": "Vision", "info": "Image recognition"}
+
+    return {"model": model_name.value}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flask Comparison -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔹 7. Flask Comparison ⚔️</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-danger">
+          <strong>❌ Flask DOES NOT have built-in Enum validation</strong>
+        </div>
+        <h3 class="subsection-title">Flask Equivalent (Manual)</h3>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from flask import Flask
+
+app = Flask(__name__)
+
+VALID_MODELS = ["gpt", "bert", "resnet"]
+
+@app.route("/models/&lt;model_name&gt;")
+def get_model(model_name):
+
+    if model_name not in VALID_MODELS:
+        return {"error": "Invalid model"}, 400
+
+    return {"model": model_name}</code></pre>
+        </div>
+        <h3 class="subsection-title">🧠 Explanation (Flask)</h3>
+        <ul class="nb-ul">
+          <li>Accept any string</li>
+          <li>Manually check validity</li>
+          <li>Return error manually</li>
+        </ul>
+        <div class="nb-callout nb-callout-danger mt-1" style="margin-top:.75rem">
+          <strong>❌ Problems in Flask</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>Manual validation</li>
+            <li>Repetitive code</li>
+            <li>Easy to forget checks</li>
+            <li>No automatic documentation</li>
+          </ul>
+        </div>
+        <div class="nb-table-wrapper mt-1" style="margin-top:1rem">
+          <table class="nb-table">
+            <thead><tr><th>Feature</th><th>FastAPI</th><th>Flask</th></tr></thead>
+            <tbody>
+              <tr><td>Enum Support</td><td><span class="check">✅</span> Built-in</td><td><span class="cross">❌</span> Manual</td></tr>
+              <tr><td>Validation</td><td>Automatic</td><td>Manual</td></tr>
+              <tr><td>Error Handling</td><td>Automatic</td><td>Manual</td></tr>
+              <tr><td>Clean Code</td><td>High</td><td>Medium</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Swagger Dropdown -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 8. Bonus: Enum Appears in Docs</div>
+      <div class="nb-card-body">
+        <p>When you open <code>/docs</code>:</p>
+        <div class="nb-callout nb-callout-tip">
+          <strong>👉 FastAPI shows:</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>Dropdown with allowed values (gpt, bert, resnet)</li>
+            <li>Prevents wrong input from UI itself</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview Notes -->
+    <div class="interview-card">
+      <div class="interview-card-header">🧠 Interview Notes (Must Remember)</div>
+      <div class="interview-card-body">
+        <ul class="nb-ul">
+          <li>Enum restricts path parameters to fixed values</li>
+          <li>Defined using Python Enum</li>
+          <li>FastAPI automatically: validates input · converts to Enum · returns error if invalid</li>
+          <li>Use <code>str, Enum</code> for string-based params</li>
+          <li>Flask requires manual validation</li>
+        </ul>
+        <div class="mental-model">
+          Normal param → accepts <span class="mm-bad">anything</span>
+          Enum param   → accepts only <span class="mm-good">predefined values</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Common Mistakes -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔥 Common Mistakes</div>
+      <div class="nb-card-body">
+        <ul class="nb-ul">
+          <li>Forgetting <code>str</code> in <code>class ModelName(str, Enum)</code></li>
+          <li>Comparing with string instead of Enum (<code>== "gpt"</code> vs <code>== ModelName.gpt</code>)</li>
+          <li>Not using <code>.value</code> when needed</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter8.html" class="chapter-nav-btn">
+        <div class="nav-btn-label">← Previous</div>
+        <div class="nav-btn-title">Routing Priority & Order</div>
+      </a>
+      <a href="chapter10.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">Next Chapter →</div>
+        <div class="nav-btn-title">Query Parameters</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🔍 Search Notes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><input type="text" class="search-input" id="search-input" placeholder="Search..." /><div class="search-results" id="search-results"></div></div>
+  </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

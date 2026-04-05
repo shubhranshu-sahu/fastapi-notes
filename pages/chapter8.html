@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 8: Path Parameter Order & Routing Priority — FastAPI Notes</title>
+  <meta name="description" content="Routing Priority in FastAPI — static vs dynamic routes, the /users/me bug, order-based matching, best practices to avoid routing bugs." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header"><h6>📚 Chapters</h6><div class="sidebar-progress">Chapter 8 of 12</div></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link active"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 8</div>
+      <h1>4. Path Parameter Order &amp; Routing Priority ⚠️</h1>
+      <p class="chapter-subtitle">Static vs Dynamic Routes · The "me" Bug · Order-Based Matching · Best Practices</p>
+    </div>
+
+    <!-- Static vs Dynamic Routes -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 1. Static vs Dynamic Routes</div>
+      <div class="nb-card-body">
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">📌 Static Route</div>
+            <div class="nb-card-body">
+              <p>A route with a <strong>fixed path</strong></p>
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/users/me")
+def get_current_user():
+    return {"user": "current user"}</code></pre>
+              </div>
+              <p class="mt-1">👉 <code>/users/me</code> → always same</p>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">📌 Dynamic Route (Path Parameter)</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/users/{user_id}")
+def get_user(user_id: int):
+    return {"user_id": user_id}</code></pre>
+              </div>
+              <p class="mt-1">👉 <code>/users/1</code>, <code>/users/2</code> → variable</p>
+            </div>
+          </div>
+        </div>
+        <div class="nb-table-wrapper mt-1" style="margin-top:1rem">
+          <table class="nb-table">
+            <thead><tr><th>Type</th><th>Example</th><th>Behavior</th></tr></thead>
+            <tbody>
+              <tr><td>Static</td><td><code>/users/me</code></td><td>Exact match</td></tr>
+              <tr><td>Dynamic</td><td><code>/users/{id}</code></td><td>Matches anything</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Problem -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔹 2. The Problem (Very Important) ⚠️</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-danger">
+          <strong>❌ Wrong Order — This will cause bugs!</strong>
+        </div>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/users/{user_id}")    # ← DEFINED FIRST (wrong!)
+def get_user(user_id: str):
+    return {"user_id": user_id}
+
+@app.get("/users/me")           # ← DEFINED SECOND (never reached for "me")
+def get_current_user():
+    return {"user": "me"}</code></pre>
+        </div>
+        <h3 class="subsection-title">🧠 What Happens?</h3>
+        <div class="nb-callout nb-callout-danger">
+          <strong>Request: GET /users/me</strong>
+          <p>👉 FastAPI matches: <code>/users/{user_id}</code></p>
+          <p>So: <code>user_id = "me"</code></p>
+          <p style="margin:0">👉 Output: <code>{"user_id": "me"}</code> ← <strong>❌ WRONG endpoint executed!</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Correct Order -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 3. Correct Order ✅</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/users/me")           # ← Static FIRST ✅
+def get_current_user():
+    return {"user": "me"}
+
+@app.get("/users/{user_id}")    # ← Dynamic AFTER ✅
+def get_user(user_id: str):
+    return {"user_id": user_id}</code></pre>
+        </div>
+        <h3 class="subsection-title">🧠 Now What Happens?</h3>
+        <div class="nb-callout nb-callout-tip">
+          <strong>Request: GET /users/me</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>👉 FastAPI: First checks <code>/users/me</code> ✅ match</li>
+            <li>Stops searching further</li>
+            <li>👉 Output: <code>{"user": "me"}</code> ← ✅ CORRECT!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Route Matching Behavior -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 4. Route Matching Behavior (Deep Understanding)</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-warning">
+          <strong>✅ Rule: FastAPI checks routes top to bottom (in order of definition)</strong>
+        </div>
+        <h3 class="subsection-title">🧠 Internal Working</h3>
+        <div class="mental-model">
+          When request comes: <span class="mm-highlight">GET /users/me</span>
+          
+          FastAPI:
+          1. Checks <span class="mm-good">first route</span>
+          2. If match → <span class="mm-good">execute</span>
+          3. Else → <span class="mm-highlight">check next</span>
+          4. Continues until match
+        </div>
+        <div class="nb-callout nb-callout-danger mt-1" style="margin-top:1rem">
+          <strong>🔥 Important Insight — Dynamic routes are greedy:</strong>
+          <p style="margin-bottom:.25rem">They match anything → <code>/users/{anything}</code></p>
+          <p style="margin-bottom:0">👉 Matches: <code>/users/1</code> · <code>/users/abc</code> · <code>/users/me</code> ⚠️</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Why This Happens -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">🔹 5. Why This Happens</div>
+      <div class="nb-card-body">
+        <p>Because: <code>@app.get("/users/{user_id}")</code></p>
+        <div class="nb-callout nb-callout-warning">
+          <strong>👉 Means: "Match ANY value after /users/"</strong>
+          <p style="margin:0">So: <code>/users/me</code> → <code>user_id = "me"</code></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flask Comparison -->
+    <div class="nb-card">
+      <div class="nb-card-header purple">🔹 6. Flask Comparison</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.route("/users/&lt;user_id&gt;")
+def get_user(user_id):
+    return {"user_id": user_id}
+
+@app.route("/users/me")
+def get_current_user():
+    return {"user": "me"}</code></pre>
+        </div>
+        <ul class="nb-ul mt-1" style="margin-top:.75rem">
+          <li>Flask also follows <strong>order-based routing</strong></li>
+          <li>Same issue can occur</li>
+        </ul>
+        <div class="nb-table-wrapper mt-1" style="margin-top:.75rem">
+          <table class="nb-table">
+            <thead><tr><th>Feature</th><th>FastAPI</th><th>Flask</th></tr></thead>
+            <tbody>
+              <tr><td>Routing</td><td>Order-based</td><td>Order-based</td></tr>
+              <tr><td>Type Validation</td><td>Strong</td><td>Weak</td></tr>
+              <tr><td>Error Feedback</td><td>Better</td><td>Basic</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Best Practices -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 7. Best Practices (VERY IMPORTANT)</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-tip">
+          <strong>✅ Always Define:</strong>
+          <ol style="margin-bottom:0;padding-left:1.25rem">
+            <li>Static routes <strong>FIRST</strong> → <code>@app.get("/users/me")</code></li>
+            <li>Dynamic routes <strong>AFTER</strong> → <code>@app.get("/users/{user_id}")</code></li>
+          </ol>
+        </div>
+        <div class="mental-model mt-1" style="margin-top:1rem">
+          ✅ More Specific → First
+          
+          <span class="mm-good">/users/me</span>          ← first
+          <span class="mm-good">/users/{id}</span>        ← after
+          <span class="mm-good">/users/{id}/posts</span>  ← even more specific
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Example -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 8. Advanced Example</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/products/latest")      # ← Static FIRST ✅
+def latest_product():
+    return {"product": "latest"}
+
+@app.get("/products/{product_id}")  # ← Dynamic AFTER ✅
+def get_product(product_id: int):
+    return {"product_id": product_id}</code></pre>
+        </div>
+        <div class="nb-callout nb-callout-danger mt-1" style="margin-top:.75rem">
+          <strong>❌ If reversed:</strong>
+          <p style="margin-bottom:0"><code>/products/{product_id}</code> will capture <code>/products/latest</code> → <code>product_id = "latest"</code> → ❌ error or wrong logic</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Avoid Bugs -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 9. How to Avoid Bugs</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-tip">
+          <strong>✅ Strategy</strong>
+          <p style="margin-bottom:0">Think: "Will this dynamic route capture my static route?" If yes → reorder</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview Explanation -->
+    <div class="interview-card">
+      <div class="interview-card-header">🔹 10. Interview Explanation (Very Important)</div>
+      <div class="interview-card-body">
+        <p>👉 If asked: <strong>"Why should /users/me be defined before /users/{id}?"</strong></p>
+        <div class="mental-model">
+          FastAPI matches routes in the <span class="mm-highlight">order they are defined</span>.
+          
+          Since dynamic routes like <span class="mm-bad">/users/{id}</span> can match any value including "me",
+          defining it first will capture requests meant for static routes like 
+          <span class="mm-good">/users/me</span>.
+          
+          Therefore, static routes must always be defined first.
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Takeaways -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🧠 Key Takeaways</div>
+      <div class="nb-card-body">
+        <ul class="nb-ul">
+          <li>Routing is <strong>order-dependent</strong></li>
+          <li>Dynamic routes are <strong>greedy</strong></li>
+          <li>Static routes must come <strong>first</strong></li>
+          <li>More specific → higher priority</li>
+          <li>Same concept applies in Flask</li>
+        </ul>
+        <div class="mental-model mt-1" style="margin-top:1rem">
+          Top    → checked first
+          Bottom → checked last
+          
+          <span class="mm-good">Static</span>  → first
+          <span class="mm-highlight">Dynamic</span> → later
+        </div>
+      </div>
+    </div>
+
+    <!-- Common Mistakes -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔥 Common Mistakes</div>
+      <div class="nb-card-body">
+        <ul class="nb-ul">
+          <li>Writing dynamic routes first</li>
+          <li>Not realizing <code>{id}</code> captures everything</li>
+          <li>Debugging wrong endpoint calls</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter7.html" class="chapter-nav-btn">
+        <div class="nav-btn-label">← Previous</div>
+        <div class="nav-btn-title">Path Parameters</div>
+      </a>
+      <a href="chapter9.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">Next Chapter →</div>
+        <div class="nav-btn-title">Enum in Path Parameters</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🔍 Search Notes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><input type="text" class="search-input" id="search-input" placeholder="Search..." /><div class="search-results" id="search-results"></div></div>
+  </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

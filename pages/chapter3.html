@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 3: Flask vs FastAPI — FastAPI Notes</title>
+  <meta name="description" content="When to use Flask vs FastAPI — core philosophy, 6 scenarios for each, comparison table, real-world decision examples, interview-ready answer." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header"><h6>📚 Chapters</h6><div class="sidebar-progress">Chapter 3 of 12</div></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link active"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 3</div>
+      <h1>When to Use Flask vs FastAPI</h1>
+      <p class="chapter-subtitle">Core Philosophy · 6 Scenarios · Comparison Table · Interview Answer</p>
+    </div>
+
+    <!-- Core Philosophy -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 1. Core Philosophy Difference</div>
+      <div class="nb-card-body">
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">🔵 Flask</div>
+            <div class="nb-card-body">
+              <ul class="nb-ul">
+                <li>Minimal, flexible micro-framework</li>
+                <li>Gives you full control, but you build many things manually</li>
+              </ul>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">⚡ FastAPI</div>
+            <div class="nb-card-body">
+              <ul class="nb-ul">
+                <li>Modern, batteries-included API framework</li>
+                <li>Focuses on performance, validation, and developer productivity</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- When to Use Flask -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🧠 2. When to Use Flask</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-tip">
+          <strong>✅ Use Flask When:</strong>
+        </div>
+
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header dark" style="font-size:.85rem;">1. You want full control / flexibility</div>
+              <div class="nb-card-body">
+                <p>Flask is unopinionated</p>
+                <ul class="nb-ul">
+                  <li>You decide structure, validation, libraries</li>
+                </ul>
+                <p><strong>👉 Example:</strong></p>
+                <ul class="nb-ul">
+                  <li>Custom architecture systems</li>
+                  <li>Experimental projects</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header dark" style="font-size:.85rem;">2. You are building simple apps</div>
+              <div class="nb-card-body">
+                <ul class="nb-ul">
+                  <li>Small APIs</li>
+                  <li>Basic CRUD apps</li>
+                  <li>Personal projects</li>
+                </ul>
+                <p>👉 Flask is faster to start for very simple use cases</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header dark" style="font-size:.85rem;">3. You don't need strict validation</div>
+              <div class="nb-card-body">
+                <p>You're okay handling:</p>
+                <ul class="nb-ul">
+                  <li>request parsing manually</li>
+                  <li>error handling manually</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header dark" style="font-size:.85rem;">4. Your project is synchronous</div>
+              <div class="nb-card-body">
+                <ul class="nb-ul">
+                  <li>No heavy async workloads</li>
+                  <li>Traditional request-response apps</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header dark" style="font-size:.85rem;">5. You are using legacy systems</div>
+              <div class="nb-card-body">
+                <ul class="nb-ul">
+                  <li>Many existing systems are Flask-based</li>
+                  <li>Easier to maintain consistency</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header dark" style="font-size:.85rem;">6. You need a large ecosystem</div>
+              <div class="nb-card-body">
+                <p>Flask has mature extensions:</p>
+                <ul class="nb-ul">
+                  <li>Auth</li>
+                  <li>Admin panels</li>
+                  <li>ORM integrations</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nb-callout nb-callout-danger mt-1" style="margin-top:1rem">
+          <strong>❌ Avoid Flask When:</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>You need high performance under load</li>
+            <li>You need built-in validation</li>
+            <li>You want automatic API docs</li>
+            <li>You need async features</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- When to Use FastAPI -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🚀 3. When to Use FastAPI</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-tip">
+          <strong>✅ Use FastAPI When:</strong>
+        </div>
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header teal" style="font-size:.85rem;">1. Building APIs (modern ones)</div>
+              <div class="nb-card-body">
+                <ul class="nb-ul">
+                  <li>REST APIs</li>
+                  <li>AI/ML APIs</li>
+                  <li>Microservices</li>
+                </ul>
+                <p>👉 FastAPI is designed for APIs first</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header teal" style="font-size:.85rem;">2. You want automatic validation</div>
+              <div class="nb-card-body">
+                <ul class="nb-ul">
+                  <li>Uses Pydantic</li>
+                  <li>No manual parsing</li>
+                </ul>
+                <p>👉 Saves a LOT of development time</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header teal" style="font-size:.85rem;">3. You need high performance</div>
+              <div class="nb-card-body">
+                <ul class="nb-ul">
+                  <li>Built on Starlette + ASGI</li>
+                  <li>Very fast (close to Node.js / Go)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header teal" style="font-size:.85rem;">4. You need async support</div>
+              <div class="nb-card-body">
+                <p>Ideal for:</p>
+                <ul class="nb-ul">
+                  <li>external APIs</li>
+                  <li>DB calls</li>
+                  <li>I/O heavy systems</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header teal" style="font-size:.85rem;">5. You want automatic documentation</div>
+              <div class="nb-card-body">
+                <p>Swagger UI generated automatically</p>
+                <p>Great for:</p>
+                <ul class="nb-ul">
+                  <li>frontend devs</li>
+                  <li>testing APIs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header teal" style="font-size:.85rem;">6. Building scalable systems</div>
+              <div class="nb-card-body">
+                <ul class="nb-ul">
+                  <li>Microservices architecture</li>
+                  <li>AI pipelines</li>
+                  <li>Real-time APIs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-card" style="margin-bottom:0">
+              <div class="nb-card-header teal" style="font-size:.85rem;">7. Cleaner, structured code</div>
+              <div class="nb-card-body">
+                <ul class="nb-ul">
+                  <li>Type hints enforce discipline</li>
+                  <li>Easier to maintain in large teams</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nb-callout nb-callout-danger mt-1" style="margin-top:1rem">
+          <strong>❌ Avoid FastAPI When:</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>You need a quick small prototype</li>
+            <li>Your team doesn't understand async or type hints</li>
+            <li>You need a lot of Flask-specific extensions</li>
+            <li>You are building a template-heavy web app (like Django-style)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Comparison -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">⚔️ 4. Detailed Comparison</div>
+      <div class="nb-card-body">
+        <div class="nb-table-wrapper">
+          <table class="nb-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>FastAPI</th>
+                <th>Flask</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Performance</td><td>⚡ Very High</td><td>Moderate</td></tr>
+              <tr><td>Async Support</td><td><span class="check">✅</span> Native</td><td>⚠️ Limited</td></tr>
+              <tr><td>Validation</td><td><span class="check">✅</span> Automatic (Pydantic)</td><td><span class="cross">❌</span> Manual</td></tr>
+              <tr><td>API Docs</td><td><span class="check">✅</span> Built-in</td><td><span class="cross">❌</span> External</td></tr>
+              <tr><td>Learning Curve</td><td>Medium</td><td>Easy</td></tr>
+              <tr><td>Flexibility</td><td>Medium</td><td>High</td></tr>
+              <tr><td>Boilerplate</td><td>Low</td><td>Medium</td></tr>
+              <tr><td>Ecosystem</td><td>Growing</td><td>Very Mature</td></tr>
+              <tr><td>Best For</td><td>APIs, AI, Microservices</td><td>Small apps, custom systems</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Real-World Decision Scenarios -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔥 5. Real-World Decision Scenarios</div>
+      <div class="nb-card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-tip">
+              <strong>Scenario 1: AI Project (like MSME CarbonTrack AI)</strong>
+              <p style="margin-bottom:.25rem">👉 <strong>Choose FastAPI</strong></p>
+              <ul class="nb-ul" style="margin-bottom:0"><li>async calls to LLM APIs</li><li>structured validation</li><li>high performance</li></ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-warning">
+              <strong>Scenario 2: Simple CRUD App</strong>
+              <p style="margin-bottom:.25rem">👉 <strong>Choose Flask</strong></p>
+              <ul class="nb-ul" style="margin-bottom:0"><li>faster to write</li><li>less complexity</li></ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-tip">
+              <strong>Scenario 3: Production-Scale API</strong>
+              <p style="margin-bottom:.25rem">👉 <strong>Choose FastAPI</strong></p>
+              <ul class="nb-ul" style="margin-bottom:0"><li>scalability</li><li>performance</li><li>validation</li></ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-warning">
+              <strong>Scenario 4: Legacy System Maintenance</strong>
+              <p style="margin-bottom:.25rem">👉 <strong>Choose Flask</strong></p>
+              <ul class="nb-ul" style="margin-bottom:0"><li>consistency with existing code</li></ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-tip">
+              <strong>Scenario 5: Microservices Architecture</strong>
+              <p style="margin-bottom:.25rem">👉 <strong>Choose FastAPI</strong></p>
+              <ul class="nb-ul" style="margin-bottom:0"><li>lightweight + fast</li><li>async-friendly</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview-Ready Answer -->
+    <div class="interview-card">
+      <div class="interview-card-header">🧠 6. Interview-Ready Answer (IMPORTANT)</div>
+      <div class="interview-card-body">
+        <p><strong>If interviewer asks:</strong></p>
+        <div class="nb-callout nb-callout-warning">
+          <strong>👉 "When would you choose FastAPI over Flask?"</strong>
+        </div>
+        <p><strong>You can say:</strong></p>
+        <div class="mental-model">
+          <span class="mm-highlight">I would choose FastAPI</span> when building modern, high-performance APIs that require 
+          automatic validation, async support, and scalability. It is especially useful in 
+          <span class="mm-good">AI/ML systems, microservices, and I/O-heavy applications</span> where performance matters. 
+          FastAPI's built-in Swagger docs and Pydantic-based validation make it a much more productive choice for API-first development.
+          
+          <span class="mm-comment">However, I'd prefer Flask for simpler apps, legacy systems, or when the team</span>
+          <span class="mm-comment">is more comfortable with sync programming and needs maximum flexibility.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Takeaways -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">⚡ 7. Key Takeaways</div>
+      <div class="nb-card-body">
+        <ul class="nb-ul">
+          <li><strong>Flask</strong> = flexibility + simplicity</li>
+          <li><strong>FastAPI</strong> = performance + structure + modern APIs</li>
+        </ul>
+        <p><strong>👉 Your mental rule:</strong></p>
+        <div class="mental-model">
+          <span class="mm-bad">Small/simple</span>     → <span class="mm-highlight">Flask</span>
+          <span class="mm-good">Scalable/API-heavy</span> → <span class="mm-highlight">FastAPI</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter2.html" class="chapter-nav-btn">
+        <div class="nav-btn-label">← Previous</div>
+        <div class="nav-btn-title">Installation & First App</div>
+      </a>
+      <a href="chapter4.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">Next Chapter →</div>
+        <div class="nav-btn-title">Async Programming</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🔍 Search Notes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><input type="text" class="search-input" id="search-input" placeholder="Search..." /><div class="search-results" id="search-results"></div></div>
+  </div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

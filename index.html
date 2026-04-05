@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FastAPI Notes — Complete Study Guide</title>
+  <meta name="description" content="A comprehensive, visually stunning FastAPI notes website covering all topics from Introduction to Query Parameters, built with Neobrutualism design." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Prism.js Dark Theme -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <div id="scroll-progress"></div>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+  <!-- NAVBAR -->
+  <nav class="nb-navbar">
+    <button class="nb-btn nb-btn-icon" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+    <a href="index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+    <div class="spacer"></div>
+    <button class="nb-btn nb-btn-icon" id="theme-toggle" title="Toggle dark mode">🌙</button>
+    <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal" title="Search (/)">🔍</button>
+    <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+  </nav>
+
+  <div class="nb-layout">
+    <!-- SIDEBAR -->
+    <aside class="nb-sidebar">
+      <div class="sidebar-header">
+        <h6>📚 Chapters</h6>
+        <div class="sidebar-progress">12 Topics</div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="sidebar-link">
+          <span class="sidebar-ch-num">🏠</span> Home
+        </a>
+        <a href="pages/chapter1.html" class="sidebar-link">
+          <span class="sidebar-ch-num">1</span> Introduction to FastAPI
+        </a>
+        <a href="pages/chapter2.html" class="sidebar-link">
+          <span class="sidebar-ch-num">2</span> Installation & First App
+        </a>
+        <a href="pages/chapter3.html" class="sidebar-link">
+          <span class="sidebar-ch-num">3</span> Flask vs FastAPI
+        </a>
+        <a href="pages/chapter4.html" class="sidebar-link">
+          <span class="sidebar-ch-num">4</span> Async Programming
+        </a>
+        <a href="pages/chapter5.html" class="sidebar-link">
+          <span class="sidebar-ch-num">5</span> Creating First App
+        </a>
+        <a href="pages/chapter6.html" class="sidebar-link">
+          <span class="sidebar-ch-num">6</span> Path Operations
+        </a>
+        <a href="pages/chapter7.html" class="sidebar-link">
+          <span class="sidebar-ch-num">7</span> Path Parameters
+        </a>
+        <a href="pages/chapter8.html" class="sidebar-link">
+          <span class="sidebar-ch-num">8</span> Routing Priority
+        </a>
+        <a href="pages/chapter9.html" class="sidebar-link">
+          <span class="sidebar-ch-num">9</span> Enum Parameters
+        </a>
+        <a href="pages/chapter10.html" class="sidebar-link">
+          <span class="sidebar-ch-num">10</span> Query Parameters
+        </a>
+        <a href="pages/chapter11.html" class="sidebar-link">
+          <span class="sidebar-ch-num">11</span> Optional Parameters
+        </a>
+        <a href="pages/chapter12.html" class="sidebar-link">
+          <span class="sidebar-ch-num">12</span> Combining Params
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="nb-content">
+
+      <!-- HERO -->
+      <div class="hero-section">
+        <div class="chapter-badge">Study Guide</div>
+        <h1>⚡ <span>FastAPI</span> Notes</h1>
+        <p>A complete, structured set of FastAPI notes — covering everything from installation to combining path and query parameters with real code examples, comparisons, and interview-ready answers.</p>
+        <div class="hero-tags">
+          <span class="hero-tag">🐍 Python</span>
+          <span class="hero-tag">⚡ FastAPI</span>
+          <span class="hero-tag">🔁 Async</span>
+          <span class="hero-tag">✅ Pydantic</span>
+          <span class="hero-tag">🌐 REST APIs</span>
+          <span class="hero-tag">🚀 Uvicorn</span>
+          <span class="hero-tag">📄 Swagger UI</span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-num">12</div>
+            <div class="stat-label">Chapters</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">978</div>
+            <div class="stat-label">Paragraphs</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">18</div>
+            <div class="stat-label">Tables</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">35+</div>
+            <div class="stat-label">Code Examples</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHAPTER CARDS -->
+      <h2 class="section-title">📚 All Chapters</h2>
+      <div class="row g-4">
+
+        <div class="col-lg-4 col-md-6 ch-color-1">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">1</div>
+              <h5>Introduction to FastAPI</h5>
+              <p>What is FastAPI, why it exists, key features, and how it compares to Flask at a high level. Includes real-world use cases.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">Concept · Features · Use Cases</span>
+              <a href="pages/chapter1.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-2">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">2</div>
+              <h5>Installation & First App</h5>
+              <p>pip install fastapi, Uvicorn ASGI server, running your first app, access in browser, Flask vs FastAPI execution comparison.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">Installation · Uvicorn · CLI</span>
+              <a href="pages/chapter2.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-3">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">3</div>
+              <h5>Flask vs FastAPI: When to Use</h5>
+              <p>Core philosophy difference, 6 scenarios for each, detailed comparison table, real-world decision scenarios, and interview-ready answers.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">Philosophy · Scenarios · Interview</span>
+              <a href="pages/chapter3.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-4">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">4</div>
+              <h5>Async Programming</h5>
+              <p>Sync vs async, real-life analogies, async def / await, event loop, asyncio.gather, and when to use async in FastAPI.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">async · await · asyncio</span>
+              <a href="pages/chapter4.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-5">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">5</div>
+              <h5>Creating First FastAPI App</h5>
+              <p>Deep understanding of FastAPI() instance, route decorators, Uvicorn internals, automatic JSON conversion, and Swagger docs.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">FastAPI() · Decorators · Swagger</span>
+              <a href="pages/chapter5.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-6">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">6</div>
+              <h5>Path Operations (HTTP Methods)</h5>
+              <p>GET, POST, PUT, DELETE in depth. REST principles, same-path different methods, internal route registration.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">GET · POST · PUT · DELETE · REST</span>
+              <a href="pages/chapter6.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-7">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">7</div>
+              <h5>Path Parameters</h5>
+              <p>Dynamic URLs with {id}, type conversion, automatic validation, error responses, multiple path parameters, Flask comparison.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">{id} · int · Validation · Errors</span>
+              <a href="pages/chapter7.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-8">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">8</div>
+              <h5>Routing Priority & Order</h5>
+              <p>Static vs dynamic routes, the "me" bug, order-dependent routing, best practices, advanced examples, how to avoid routing bugs.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">Order · Static · Dynamic · Bugs</span>
+              <a href="pages/chapter8.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-9">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">9</div>
+              <h5>Enum in Path Parameters</h5>
+              <p>Restricting path params to fixed values, Python Enum class, str+Enum pattern, conditional logic, Swagger dropdown, Flask comparison.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">Enum · Validation · Swagger Dropdown</span>
+              <a href="pages/chapter9.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-10">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">10</div>
+              <h5>Query Parameters</h5>
+              <p>Key-value pairs after ?, automatic mapping to function params, default values, differentiating from path params, Flask comparison.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">? · key=value · Default · Types</span>
+              <a href="pages/chapter10.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-11">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">11</div>
+              <h5>Optional Query Parameters</h5>
+              <p>Making parameters optional with None, Optional[str], conditional logic, search APIs, filter endpoints, real-world usage.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">Optional · None · Filters</span>
+              <a href="pages/chapter11.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 ch-color-12">
+          <div class="chapter-card">
+            <div class="chapter-card-top">
+              <div class="ch-num-badge">12</div>
+              <h5>Combining Path + Query Params</h5>
+              <p>Using both together, pagination (skip/limit), multiple query params, search endpoints, Flask comparison, core routing completion.</p>
+            </div>
+            <div class="chapter-card-footer">
+              <span class="ch-topics">Path + Query · Pagination · Search</span>
+              <a href="pages/chapter12.html" class="ch-open-link">Open →</a>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /row -->
+
+      <!-- QUICK REFERENCE CARD -->
+      <h2 class="section-title mt-5">⚡ Quick Reference</h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="nb-card">
+            <div class="nb-card-header teal">🚀 Essential Commands</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header">
+                  <div class="code-dots"><span></span><span></span><span></span></div>
+                  <span class="code-lang">bash</span>
+                  <button class="copy-btn">📋 Copy</button>
+                </div>
+<pre><code class="language-bash"># Install FastAPI
+pip install fastapi
+
+# Install with all extras
+pip install "fastapi[all]"
+
+# Install ASGI server
+pip install uvicorn
+
+# Run development server
+uvicorn main:app --reload
+
+# Run on custom port
+uvicorn main:app --reload --port 8080</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="nb-card">
+            <div class="nb-card-header yellow">📋 Minimal App Structure</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header">
+                  <div class="code-dots"><span></span><span></span><span></span></div>
+                  <span class="code-lang">python</span>
+                  <button class="copy-btn">📋 Copy</button>
+                </div>
+<pre><code class="language-python">from fastapi import FastAPI
+from typing import Optional
+
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"message": "Hello FastAPI"}
+
+@app.get("/items/{item_id}")
+def get_item(item_id: int, q: Optional[str] = None):
+    return {"item_id": item_id, "q": q}
+
+# Run: uvicorn main:app --reload</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nb-footer">
+        Built with ❤️ using HTML, CSS, Bootstrap &amp; JS &nbsp;·&nbsp; Neobrutualism Design &nbsp;·&nbsp; FastAPI Notes Study Guide
+      </div>
+
+    </main>
+  </div>
+
+  <!-- SEARCH MODAL -->
+  <div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="searchModalLabel">🔍 Search Notes <small style="font-size:.7rem;font-weight:600;opacity:.7;margin-left:.5rem">Press / to open</small></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="search-input" id="search-input" placeholder="Search chapters, topics, concepts..." autofocus />
+          <div class="search-results" id="search-results"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Prism.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <!-- Main JS -->
+  <script src="js/main.js"></script>
+</body>
+</html>

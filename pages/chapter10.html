@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 10: Query Parameters — FastAPI Notes</title>
+  <meta name="description" content="Query Parameters in FastAPI — key-value pairs after ?, automatic mapping, default values, path vs query difference, Flask comparison." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header"><h6>📚 Chapters</h6><div class="sidebar-progress">Chapter 10 of 12</div></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link active"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 10</div>
+      <h1>6. Query Parameters</h1>
+      <p class="chapter-subtitle">Key-Value After ? · Automatic Mapping · Default Values · Path vs Query · Flask Comparison</p>
+    </div>
+
+    <!-- What are Query Parameters -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 1. What are Query Parameters?</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-info">
+          <strong>✅ Definition</strong>
+          Query parameters are key-value pairs added after <code>?</code> in a URL used to send additional data to the server.
+        </div>
+        <h3 class="subsection-title">🧠 Example</h3>
+        <div class="mental-model">
+          <span class="mm-highlight">/items?name=abc&amp;age=20</span>
+        </div>
+        <div class="nb-table-wrapper mt-1" style="margin-top:1rem">
+          <table class="nb-table">
+            <thead><tr><th>Part</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>/items</code></td><td>Path</td></tr>
+              <tr><td><code>?</code></td><td>Start of query params</td></tr>
+              <tr><td><code>name=abc</code></td><td>key-value pair</td></tr>
+              <tr><td><code>age=20</code></td><td>another param</td></tr>
+              <tr><td><code>&amp;</code></td><td>separator</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="subsection-title">✅ FastAPI Code</h3>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/items")
+def get_items(name: str, age: int):
+    return {"name": name, "age": age}</code></pre>
+        </div>
+
+        <h3 class="subsection-title">🧠 How FastAPI Understands This</h3>
+        <div class="nb-callout nb-callout-tip">
+          <strong>👉 Request: GET /items?name=abc&amp;age=20</strong>
+          <p style="margin-bottom:.25rem">👉 FastAPI matches function parameters:</p>
+          <pre style="margin:0;background:#1a1a2e;color:#e2e8f0;padding:.5rem;border-radius:3px;font-size:.875rem">name = "abc"
+age  = 20</pre>
+          <p style="margin:.25rem 0 0">👉 Output: <code>{"name": "abc", "age": 20}</code></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- How FastAPI Differentiates -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 2. How FastAPI Differentiates Query vs Path</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-warning">
+          <strong>✅ Rule:</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>If parameter is in URL path → <strong>Path parameter</strong></li>
+            <li>Else → <strong>Query parameter</strong></li>
+          </ul>
+        </div>
+        <h3 class="subsection-title">Example</h3>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/items/{item_id}")
+def get_item(item_id: int, name: str):
+    return {"item_id": item_id, "name": name}</code></pre>
+        </div>
+        <p class="mt-1">Request: <code>/items/10?name=abc</code></p>
+        <div class="nb-table-wrapper mt-1" style="margin-top:.75rem">
+          <table class="nb-table">
+            <thead><tr><th>Parameter</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td><code>item_id</code></td><td>Path (<code>/items/10</code>)</td></tr>
+              <tr><td><code>name</code></td><td>Query (<code>?name=abc</code>)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="nb-table-wrapper mt-1" style="margin-top:1rem">
+          <table class="nb-table">
+            <thead><tr><th>Feature</th><th>Path Param</th><th>Query Param</th></tr></thead>
+            <tbody>
+              <tr><td>Location</td><td>URL path</td><td>After <code>?</code></td></tr>
+              <tr><td>Required</td><td>Always</td><td>Optional (usually)</td></tr>
+              <tr><td>Use case</td><td>Identify resource</td><td>Filter/extra info</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Default Values -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 3. Default Values in Query Params</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-info">
+          <strong>✅ Concept</strong>
+          You can assign default values → makes parameter <strong>optional</strong>
+        </div>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/items")
+def get_items(limit: int = 10):
+    return {"limit": limit}</code></pre>
+        </div>
+        <h3 class="subsection-title">🧠 Behavior</h3>
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">Request: /items (no param)</div>
+            <div class="nb-card-body">
+              <div class="mental-model">Output: <span class="mm-good">{"limit": 10}</span> (default used)</div>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">Request: /items?limit=5</div>
+            <div class="nb-card-body">
+              <div class="mental-model">Output: <span class="mm-good">{"limit": 5}</span> (user value used)</div>
+            </div>
+          </div>
+        </div>
+        <div class="nb-callout nb-callout-warning mt-1" style="margin-top:1rem">
+          <strong>🔥 Important Rule</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>👉 Default value = optional parameter</li>
+            <li>No default = <strong>required</strong> (will error if missing)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flask Comparison -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔹 Flask Comparison ⚔️</div>
+      <div class="nb-card-body">
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">🔵 Flask (Manual)</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from flask import Flask, request
+
+app = Flask(__name__)
+
+@app.route("/items")
+def get_items():
+    name = request.args.get("name")
+    age = request.args.get("age")
+    return {"name": name, "age": age}</code></pre>
+              </div>
+              <div class="nb-callout nb-callout-danger" style="margin-top:.5rem">
+                <strong>Problems in Flask:</strong>
+                <ul class="nb-ul" style="margin-bottom:0">
+                  <li><code>request.args.get()</code> → manually fetch query params</li>
+                  <li>No automatic type conversion</li>
+                  <li>No validation</li>
+                  <li>Manual parsing, type casting</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">⚡ FastAPI (Automatic)</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/items")
+def get_items(name: str, age: int):
+    return {"name": name, "age": age}</code></pre>
+              </div>
+              <div class="nb-callout nb-callout-tip" style="margin-top:.5rem">
+                <strong>FastAPI Advantages:</strong>
+                <ul class="nb-ul" style="margin-bottom:0">
+                  <li>Automatic parsing</li>
+                  <li>Automatic type conversion</li>
+                  <li>Built-in validation</li>
+                  <li>High code cleanliness</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nb-table-wrapper mt-1" style="margin-top:1rem">
+          <table class="nb-table">
+            <thead><tr><th>Feature</th><th>FastAPI</th><th>Flask</th></tr></thead>
+            <tbody>
+              <tr><td>Parsing</td><td>Automatic</td><td>Manual</td></tr>
+              <tr><td>Type Conversion</td><td>Automatic</td><td>Manual</td></tr>
+              <tr><td>Validation</td><td>Built-in</td><td>Manual</td></tr>
+              <tr><td>Code Cleanliness</td><td>High</td><td>Medium</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview Notes -->
+    <div class="interview-card">
+      <div class="interview-card-header">🧠 Interview Notes (Must Remember)</div>
+      <div class="interview-card-body">
+        <ul class="nb-ul">
+          <li>Query params are passed after <code>?</code></li>
+          <li>Automatically mapped to function parameters</li>
+          <li>Default values → make params optional</li>
+          <li><code>None</code> → optional parameter</li>
+          <li>Path param → resource identification</li>
+          <li>Query param → filtering/modification</li>
+          <li>FastAPI auto handles: parsing · type conversion · validation</li>
+        </ul>
+        <div class="mental-model">
+          <span class="mm-highlight">/items/1</span>           → path param
+          <span class="mm-highlight">/items?limit=10</span>    → query param
+          <span class="mm-highlight">/items/1?active=true</span> → both
+        </div>
+      </div>
+    </div>
+
+    <!-- Common Mistakes -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔥 Common Mistakes</div>
+      <div class="nb-card-body">
+        <ul class="nb-ul">
+          <li>Forgetting default → making param required accidentally</li>
+          <li>Mixing path and query incorrectly</li>
+          <li>Using <code>request.args</code> like Flask in FastAPI</li>
+          <li>Not using type hints</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter9.html" class="chapter-nav-btn">
+        <div class="nav-btn-label">← Previous</div>
+        <div class="nav-btn-title">Enum in Path Parameters</div>
+      </a>
+      <a href="chapter11.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">Next Chapter →</div>
+        <div class="nav-btn-title">Optional Query Parameters</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🔍 Search Notes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><input type="text" class="search-input" id="search-input" placeholder="Search..." /><div class="search-results" id="search-results"></div></div>
+  </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

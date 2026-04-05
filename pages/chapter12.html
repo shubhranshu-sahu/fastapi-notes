@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 12: Combining Path + Query Parameters — FastAPI Notes</title>
+  <meta name="description" content="Combining Path and Query Parameters in FastAPI — pagination (skip/limit), multiple query params, search endpoints, Flask comparison, routing complete." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header"><h6>📚 Chapters</h6><div class="sidebar-progress">Chapter 12 of 12</div></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link active"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 12 — Final</div>
+      <h1>8. Combining Path + Query Parameters</h1>
+      <p class="chapter-subtitle">Path + Query · Pagination (skip/limit) · Search APIs · Flask Comparison · Core Routing Complete 🎉</p>
+    </div>
+
+    <!-- Concept -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 1. Concept</div>
+      <div class="nb-card-body">
+        <p>You can combine both:</p>
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">📌 Path Param</div>
+            <div class="nb-card-body">
+              <p style="margin:0">→ <strong>identify resource</strong></p>
+              <p style="margin:.25rem 0 0"><code>/users/{user_id}</code></p>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">🔍 Query Param</div>
+            <div class="nb-card-body">
+              <p style="margin:0">→ <strong>modify/filter data</strong></p>
+              <p style="margin:.25rem 0 0"><code>?active=true</code></p>
+            </div>
+          </div>
+        </div>
+        <div class="code-wrapper mt-1" style="margin-top:1rem">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/users/{user_id}")
+def get_user(user_id: int, active: bool = True):
+    return {
+        "user_id": user_id,
+        "active": active
+    }</code></pre>
+        </div>
+
+        <h3 class="subsection-title">🧠 Example Requests</h3>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-info">
+              <strong>Case 1: /users/1</strong>
+              <pre style="margin:.25rem 0 0;background:#1a1a2e;color:#e2e8f0;padding:.5rem;border-radius:3px;font-size:.875rem">{
+  "user_id": 1,
+  "active": true   (default)
+}</pre>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-tip">
+              <strong>Case 2: /users/1?active=false</strong>
+              <pre style="margin:.25rem 0 0;background:#1a1a2e;color:#e2e8f0;padding:.5rem;border-radius:3px;font-size:.875rem">{
+  "user_id": 1,
+  "active": false   (user value)
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 2. Real-World Example (Pagination)</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/products")
+def get_products(skip: int = 0, limit: int = 10):
+    return {
+        "skip": skip,
+        "limit": limit
+    }</code></pre>
+        </div>
+        <p class="mt-1">Request: <code>/products?skip=10&amp;limit=5</code></p>
+        <div class="nb-callout nb-callout-tip mt-1" style="margin-top:.75rem">
+          <strong>👉 Used in:</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>Pagination</li>
+            <li>Infinite scrolling</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multiple Query Parameters -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">🔹 3. Multiple Query Parameters — Search API</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/search")
+def search(q: str, page: int = 1, limit: int = 10):
+    return {
+        "query": q,
+        "page": page,
+        "limit": limit
+    }</code></pre>
+        </div>
+        <p class="mt-1"><strong>👉 Example Request:</strong> <code>/search?q=fastapi&amp;page=2&amp;limit=20</code></p>
+        <div class="nb-callout nb-callout-tip mt-1" style="margin-top:.75rem">
+          <strong>Output:</strong>
+          <pre style="margin:.25rem 0 0;background:#1a1a2e;color:#e2e8f0;padding:.5rem;border-radius:3px;font-size:.875rem">{
+  "query": "fastapi",
+  "page": 2,
+  "limit": 20
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flask Comparison -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔹 4. Flask Comparison ⚔️</div>
+      <div class="nb-card-body">
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">🔵 Flask Manual Code</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from flask import Flask, request
+
+app = Flask(__name__)
+
+@app.route("/items")
+def get_items():
+    name = request.args.get("name")
+    age = request.args.get("age")
+    return {"name": name, "age": age}</code></pre>
+              </div>
+              <ul class="nb-ul mt-1" style="margin-top:.75rem">
+                <li><code>request.args.get()</code> → manually fetch</li>
+                <li>No automatic type conversion</li>
+                <li>No validation</li>
+                <li>Manual parsing + Manual type casting</li>
+              </ul>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">⚡ FastAPI Clean Code</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/items")
+def get_items(name: str, age: int):
+    return {"name": name, "age": age}</code></pre>
+              </div>
+              <ul class="nb-ul mt-1" style="margin-top:.75rem">
+                <li>Automatically parsed from URL</li>
+                <li>Auto type conversion</li>
+                <li>Built-in validation</li>
+                <li>Clean, readable code</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview Notes -->
+    <div class="interview-card">
+      <div class="interview-card-header">🧠 Interview Notes (Must Remember)</div>
+      <div class="interview-card-body">
+        <ul class="nb-ul">
+          <li>Query params are passed after <code>?</code></li>
+          <li>Automatically mapped to function parameters</li>
+          <li>Default values → make params optional</li>
+          <li><code>None</code> → optional parameter</li>
+          <li>Path param → resource identification</li>
+          <li>Query param → filtering/modification</li>
+          <li>FastAPI auto handles: parsing · type conversion · validation</li>
+        </ul>
+        <div class="mental-model">
+          <span class="mm-highlight">/items/1</span>               → path param
+          <span class="mm-highlight">/items?limit=10</span>        →  query param
+          <span class="mm-highlight">/items/1?active=true</span>   → both combined
+        </div>
+      </div>
+    </div>
+
+    <!-- Routing Complete -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🚀 You've Completed Core Routing! 🎉</div>
+      <div class="nb-card-body">
+        <p>Now you understand:</p>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="nb-callout nb-callout-tip" style="text-align:center">
+              <strong>✅ Endpoints</strong>
+              <p style="margin:0;font-size:.85rem">@app.get, @app.post etc.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="nb-callout nb-callout-tip" style="text-align:center">
+              <strong>✅ HTTP Methods</strong>
+              <p style="margin:0;font-size:.85rem">GET, POST, PUT, DELETE</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="nb-callout nb-callout-tip" style="text-align:center">
+              <strong>✅ Path Params</strong>
+              <p style="margin:0;font-size:.85rem">/items/{item_id}</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="nb-callout nb-callout-info" style="text-align:center">
+              <strong>✅ Query Params</strong>
+              <p style="margin:0;font-size:.85rem">?key=value</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="nb-callout nb-callout-info" style="text-align:center">
+              <strong>✅ Routing Priority</strong>
+              <p style="margin:0;font-size:.85rem">Static before Dynamic</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="nb-callout nb-callout-info" style="text-align:center">
+              <strong>✅ Enum Params</strong>
+              <p style="margin:0;font-size:.85rem">Restricted values</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Common Mistakes -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔥 Common Mistakes</div>
+      <div class="nb-card-body">
+        <ul class="nb-ul">
+          <li>Forgetting default → making param required accidentally</li>
+          <li>Mixing path and query incorrectly</li>
+          <li>Using <code>request.args</code> like Flask in FastAPI</li>
+          <li>Not using type hints (losing auto-validation)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter11.html" class="chapter-nav-btn">
+        <div class="nav-btn-label">← Previous</div>
+        <div class="nav-btn-title">Optional Query Parameters</div>
+      </a>
+      <a href="../index.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">🏠 Back to</div>
+        <div class="nav-btn-title">All Chapters — Home</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🔍 Search Notes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><input type="text" class="search-input" id="search-input" placeholder="Search..." /><div class="search-results" id="search-results"></div></div>
+  </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 6: Path Operations (HTTP Methods) — FastAPI Notes</title>
+  <meta name="description" content="Path Operations in FastAPI — GET, POST, PUT, DELETE HTTP methods, REST design, full CRUD example, internal working." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header"><h6>📚 Chapters</h6><div class="sidebar-progress">Chapter 6 of 12</div></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link active"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 6</div>
+      <h1>2. Path Operations (HTTP Methods)</h1>
+      <p class="chapter-subtitle">GET · POST · PUT · DELETE · REST Principles · Full CRUD Example</p>
+    </div>
+
+    <!-- What is a Path Operation -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 1. What is a Path Operation?</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-info">
+          <strong>✅ Definition</strong>
+          A path operation is a combination of: a URL path (like /users) + an HTTP method (GET, POST, etc.)
+        </div>
+        <div class="nb-callout nb-callout-tip">
+          <strong>👉 Together, they define:</strong>
+          "What should happen when a request is made to this URL using this method?"
+        </div>
+
+        <h3 class="subsection-title">🧠 Example</h3>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/users")
+def get_users():
+    return ["user1", "user2"]</code></pre>
+        </div>
+        <ul class="nb-ul mt-1" style="margin-top:.75rem">
+          <li>Path → <code>/users</code></li>
+          <li>Method → <code>GET</code></li>
+          <li>Operation → return users list</li>
+        </ul>
+
+        <div class="nb-callout nb-callout-warning mt-1" style="margin-top:1rem">
+          <strong>🔥 Important Insight</strong>
+          <p style="margin-bottom:.25rem">👉 Same path can have different operations:</p>
+          <pre style="margin:0;background:#1a1a2e;color:#e2e8f0;padding:.5rem;border-radius:3px;font-size:.85rem">@app.get("/users")    # Fetch users
+@app.post("/users")   # Create user</pre>
+          <p style="margin-bottom:0">👉 Path same, method different → behavior different</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- HTTP Methods -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 2. HTTP Methods (Core Concept)</div>
+      <div class="nb-card-body">
+        <p>HTTP methods define <strong>intent of request</strong></p>
+        <div class="nb-table-wrapper">
+          <table class="nb-table">
+            <thead><tr><th>Method</th><th>Purpose</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge-concept">GET</span></td><td>Fetch data</td><td>Get users</td></tr>
+              <tr><td><span class="badge-concept badge-tip">POST</span></td><td>Create data</td><td>Create user</td></tr>
+              <tr><td><span class="badge-concept badge-info">PUT</span></td><td>Update data (full)</td><td>Update user</td></tr>
+              <tr><td><span class="badge-concept badge-important">DELETE</span></td><td>Remove data</td><td>Delete user</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- GET Deep Explanation -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 3. @app.get() Deep Explanation</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/users")
+def get_users():
+    return {"users": ["Alice", "Bob"]}</code></pre>
+        </div>
+
+        <h3 class="subsection-title">🧠 Breakdown (Line-by-Line)</h3>
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-info">
+              <strong>1. @app.get("/users")</strong>
+              <ul class="nb-ul" style="margin-bottom:0">
+                <li><code>@</code> → decorator syntax in Python</li>
+                <li><code>app.get</code> → method of FastAPI instance</li>
+                <li><code>"/users"</code> → path</li>
+                <li>Registers route in FastAPI router</li>
+                <li>Maps: <code>(GET, "/users") → get_users()</code></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-tip">
+              <strong>2. Function get_users()</strong>
+              <p style="margin-bottom:.25rem">Called when request hits <code>/users</code></p>
+              <p style="margin-bottom:0">Can be <code>def</code> or <code>async def</code></p>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="nb-callout nb-callout-warning">
+              <strong>3. Return Statement</strong>
+              <p style="margin-bottom:.25rem"><code>return {"users": ["Alice", "Bob"]}</code></p>
+              FastAPI automatically: Converts dict → JSON · Adds headers (Content-Type: application/json) · Sends HTTP response
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">🔹 4. @app.post() Deep Explanation</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.post("/users")
+def create_user():
+    return {"message": "User created"}</code></pre>
+        </div>
+        <p class="mt-1">Used to <strong>send data to server</strong>. Typically used with request body (later topic).</p>
+        <p><strong>👉 Example real-world:</strong></p>
+        <ul class="nb-ul">
+          <li>Register user</li>
+          <li>Submit form</li>
+          <li>Add data to DB</li>
+        </ul>
+        <div class="nb-table-wrapper">
+          <table class="nb-table">
+            <thead><tr><th>Feature</th><th>GET</th><th>POST</th></tr></thead>
+            <tbody>
+              <tr><td>Data sent</td><td>URL</td><td>Body</td></tr>
+              <tr><td>Use case</td><td>Fetch</td><td>Create</td></tr>
+              <tr><td>Safe</td><td><span class="check">✅</span></td><td><span class="cross">❌</span></td></tr>
+              <tr><td>Idempotent</td><td><span class="check">✅</span></td><td><span class="cross">❌</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PUT -->
+    <div class="nb-card">
+      <div class="nb-card-header purple">🔹 5. @app.put() Deep Explanation</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.put("/users/1")
+def update_user():
+    return {"message": "User updated"}</code></pre>
+        </div>
+        <ul class="nb-ul mt-1" style="margin-top:.75rem">
+          <li>Used to <strong>update existing resource</strong></li>
+          <li>Usually replaces entire data</li>
+          <li>👉 Example: Update user profile completely</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- DELETE -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔹 6. @app.delete() Deep Explanation</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.delete("/users/1")
+def delete_user():
+    return {"message": "User deleted"}</code></pre>
+        </div>
+        <ul class="nb-ul mt-1" style="margin-top:.75rem">
+          <li>Used to <strong>remove resource</strong></li>
+          <li>Should be idempotent: Deleting again → same result</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- REST Concept -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 7. REST Concept (VERY IMPORTANT)</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-info">
+          <strong>✅ What is REST?</strong>
+          REST = Representational State Transfer. It is a design style where each URL represents a resource and HTTP methods define actions.
+        </div>
+        <h3 class="subsection-title">🧠 REST Example</h3>
+        <div class="nb-table-wrapper">
+          <table class="nb-table">
+            <thead><tr><th>Action</th><th>Method</th><th>Endpoint</th></tr></thead>
+            <tbody>
+              <tr><td>Get all users</td><td><span class="badge-concept">GET</span></td><td><code>/users</code></td></tr>
+              <tr><td>Get one user</td><td><span class="badge-concept">GET</span></td><td><code>/users/1</code></td></tr>
+              <tr><td>Create user</td><td><span class="badge-concept badge-tip">POST</span></td><td><code>/users</code></td></tr>
+              <tr><td>Update user</td><td><span class="badge-concept badge-info">PUT</span></td><td><code>/users/1</code></td></tr>
+              <tr><td>Delete user</td><td><span class="badge-concept badge-important">DELETE</span></td><td><code>/users/1</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="nb-callout nb-callout-warning mt-1" style="margin-top:1rem">
+          <strong>🔥 REST Principle — Use nouns, not verbs:</strong>
+          <div class="nb-compare" style="margin-top:.5rem">
+            <div class="nb-callout nb-callout-danger" style="margin:0">
+              <strong>❌ Wrong:</strong>
+              <code>/getUsers</code> &nbsp; <code>/createUser</code>
+            </div>
+            <div class="nb-callout nb-callout-tip" style="margin:0">
+              <strong>✅ Correct:</strong>
+              <code>/users</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full Example Combined -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 8. Full Example (Combined CRUD)</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+# GET - Read
+@app.get("/users")
+def get_users():
+    return {"users": ["Alice", "Bob"]}
+
+# POST - Create
+@app.post("/users")
+def create_user():
+    return {"message": "User created"}
+
+# PUT - Update
+@app.put("/users/{user_id}")
+def update_user(user_id: int):
+    return {"message": f"User {user_id} updated"}
+
+# DELETE - Remove
+@app.delete("/users/{user_id}")
+def delete_user(user_id: int):
+    return {"message": f"User {user_id} deleted"}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flask vs FastAPI Path Operations -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">🔹 9. Flask vs FastAPI (Path Operations)</div>
+      <div class="nb-card-body">
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">🔵 Flask</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.route("/users", methods=["GET"])
+def get_users():
+    return {"users": []}</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">⚡ FastAPI</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/users")
+def get_users():
+    return {"users": []}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nb-table-wrapper mt-1" style="margin-top:1rem">
+          <table class="nb-table">
+            <thead><tr><th>Feature</th><th>FastAPI</th><th>Flask</th></tr></thead>
+            <tbody>
+              <tr><td>Method Declaration</td><td>Separate (<code>@app.get</code>)</td><td>Inside <code>methods=[]</code></td></tr>
+              <tr><td>Clarity</td><td>High</td><td>Medium</td></tr>
+              <tr><td>Validation</td><td>Built-in</td><td>Manual</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Internal Working -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 10. Important Internal Working</div>
+      <div class="nb-card-body">
+        <p>When you define <code>@app.get("/users")</code></p>
+        <p>👉 FastAPI internally:</p>
+        <ul class="nb-ul">
+          <li>Registers route in router</li>
+          <li>Stores: path · method · function reference</li>
+        </ul>
+        <p>On request:</p>
+        <ul class="nb-ul">
+          <li>matches path + method</li>
+          <li>executes function</li>
+          <li>serializes response</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Interview Notes -->
+    <div class="interview-card">
+      <div class="interview-card-header">🧠 Interview Notes (Must Remember)</div>
+      <div class="interview-card-body">
+        <ul class="nb-ul">
+          <li>Path operation = URL + HTTP method</li>
+          <li>Decorators map routes to functions</li>
+          <li>FastAPI automatically converts response to JSON</li>
+          <li>REST uses: GET → read · POST → create · PUT → update · DELETE → remove</li>
+          <li>Same path + different method = different behavior</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter5.html" class="chapter-nav-btn">
+        <div class="nav-btn-label">← Previous</div>
+        <div class="nav-btn-title">Creating First FastAPI App</div>
+      </a>
+      <a href="chapter7.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">Next Chapter →</div>
+        <div class="nav-btn-title">Path Parameters</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🔍 Search Notes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><input type="text" class="search-input" id="search-input" placeholder="Search..." /><div class="search-results" id="search-results"></div></div>
+  </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

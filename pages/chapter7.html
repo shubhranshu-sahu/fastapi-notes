@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 7: Path Parameters — FastAPI Notes</title>
+  <meta name="description" content="Path Parameters in FastAPI — dynamic URLs, type conversion, automatic validation, error handling, multiple params, Flask comparison." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header"><h6>📚 Chapters</h6><div class="sidebar-progress">Chapter 7 of 12</div></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link active"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 7</div>
+      <h1>3. Path Parameters</h1>
+      <p class="chapter-subtitle">Dynamic URLs · Type Conversion · Validation · Error Handling · Multiple Params</p>
+    </div>
+
+    <!-- Dynamic URLs -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 1. Dynamic URLs (/items/{id})</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-info">
+          <strong>✅ Concept</strong>
+          Path parameters allow you to create dynamic routes, where part of the URL acts as a variable.
+        </div>
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">❌ Instead of fixed:</div>
+            <div class="nb-card-body">
+              <div class="mental-model">
+                /items/1
+                /items/2
+              </div>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">✅ You write:</div>
+            <div class="nb-card-body">
+              <div class="mental-model">
+                /items/<span class="mm-highlight">{id}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="subsection-title">✅ FastAPI Code</h3>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/items/{item_id}")
+def get_item(item_id):
+    return {"item_id": item_id}</code></pre>
+        </div>
+
+        <h3 class="subsection-title">🧠 Explanation</h3>
+        <ul class="nb-ul">
+          <li><code>"/items/{item_id}"</code> — <code>{item_id}</code> is a dynamic placeholder</li>
+          <li>FastAPI extracts value from URL</li>
+          <li>👉 Request: <code>GET /items/10</code> → FastAPI does: <code>item_id = 10</code></li>
+        </ul>
+        <div class="nb-callout nb-callout-tip">
+          <strong>Function Parameter</strong>
+          <code>def get_item(item_id):</code> — Parameter name must match <code>{item_id}</code>. FastAPI automatically injects value.
+        </div>
+
+        <h3 class="subsection-title">⚔️ Flask Comparison</h3>
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">🔵 Flask</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.route("/items/&lt;item_id&gt;")
+def get_item(item_id):
+    return {"item_id": item_id}</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">⚡ FastAPI</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/items/{item_id}")
+def get_item(item_id):
+    return {"item_id": item_id}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nb-table-wrapper mt-1" style="margin-top:.75rem">
+          <table class="nb-table">
+            <thead><tr><th>Feature</th><th>FastAPI</th><th>Flask</th></tr></thead>
+            <tbody>
+              <tr><td>Syntax</td><td><code>{item_id}</code></td><td><code>&lt;item_id&gt;</code></td></tr>
+              <tr><td>Type Handling</td><td>Automatic</td><td>Manual</td></tr>
+              <tr><td>Validation</td><td>Built-in</td><td>Limited</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Type Conversion -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 2. Type Conversion (int, str, etc.)</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-info">
+          <strong>✅ Concept</strong>
+          FastAPI uses Python type hints to: Convert data · Validate input
+        </div>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/items/{item_id}")
+def get_item(item_id: int):
+    return {"item_id": item_id}</code></pre>
+        </div>
+        <h3 class="subsection-title">🧠 What Happens Internally</h3>
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">✅ Valid: GET /items/10</div>
+            <div class="nb-card-body">
+              <div class="mental-model">
+                "10" (string from URL)
+                → <span class="mm-good">Converted to int(10)</span>
+              </div>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">❌ Invalid: GET /items/abc</div>
+            <div class="nb-card-body">
+              <div class="mental-model">
+                <span class="mm-bad">Cannot convert to int</span>
+                FastAPI throws error <span class="mm-highlight">automatically</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nb-callout nb-callout-tip mt-1" style="margin-top:.75rem">
+          <strong>🔥 Supported Types</strong>
+          <code>int</code> &nbsp; <code>str</code> &nbsp; <code>float</code> &nbsp; <code>bool</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Validation via Type Hints -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 3. Validation via Type Hints</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/users/{user_id}")
+def get_user(user_id: int):
+    return {"user_id": user_id}</code></pre>
+        </div>
+        <h3 class="subsection-title">🧠 What FastAPI Does</h3>
+        <p>Checks:</p>
+        <ul class="nb-ul">
+          <li>Is <code>user_id</code> present?</li>
+          <li>Is it integer?</li>
+          <li>If invalid → returns structured error</li>
+        </ul>
+        <div class="nb-callout nb-callout-warning">
+          <strong>🧠 Why This is Powerful</strong>
+          <p style="margin:0">👉 You don't write: <code>try/except</code> · manual validation · error responses. FastAPI handles everything using Pydantic.</p>
+        </div>
+        <h3 class="subsection-title">⚔️ Flask Comparison (Manual)</h3>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python"># Flask requires manual validation
+@app.route("/users/&lt;user_id&gt;")
+def get_user(user_id):
+    try:
+        user_id = int(user_id)
+    except:
+        return {"error": "Invalid ID"}, 400
+
+    return {"user_id": user_id}</code></pre>
+        </div>
+        <ul class="nb-ul mt-1" style="margin-top:.75rem">
+          <li>Flask: Manual conversion + Manual error handling</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Error Handling -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔹 4. Error Handling (Invalid Types)</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/items/{item_id}")
+def get_item(item_id: int):
+    return {"item_id": item_id}</code></pre>
+        </div>
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-tip">
+              <strong>🧠 Case 1: Valid Input</strong>
+              <p><code>GET /items/5</code></p>
+              <p style="margin:0">✅ Response: <code>{"item_id": 5}</code></p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-danger">
+              <strong>🧠 Case 2: Invalid Input</strong>
+              <p><code>GET /items/abc</code></p>
+              <p style="margin:0">❌ Auto Error Response:</p>
+              <pre style="margin:.25rem 0 0;background:#1a1a2e;color:#e2e8f0;padding:.5rem;border-radius:3px;font-size:.8rem">{
+  "detail": [{
+    "msg": "value is not a valid integer"
+  }]
+}</pre>
+            </div>
+          </div>
+        </div>
+        <div class="nb-callout nb-callout-info mt-1" style="margin-top:1rem">
+          <strong>🔥 Important Insight — FastAPI returns:</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>Proper HTTP status code (422)</li>
+            <li>Detailed error message</li>
+            <li>Location of error (path)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multiple Path Parameters -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">🔹 5. Multiple Path Parameters</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">@app.get("/users/{user_id}/orders/{order_id}")
+def get_order(user_id: int, order_id: int):
+    return {
+        "user_id": user_id,
+        "order_id": order_id
+    }</code></pre>
+        </div>
+        <h3 class="subsection-title">🧠 Example</h3>
+        <div class="nb-callout nb-callout-tip">
+          <strong>GET /users/1/orders/101</strong>
+          <pre style="margin:.25rem 0 0;background:#1a1a2e;color:#e2e8f0;padding:.5rem;border-radius:3px;font-size:.875rem">{
+  "user_id": 1,
+  "order_id": 101
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Internal Working -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 6. Internal Working (Important)</div>
+      <div class="nb-card-body">
+        <p>When request comes: <code>GET /items/10</code></p>
+        <div class="mental-model">
+          👉 FastAPI:
+          1. Matches route <span class="mm-highlight">/items/{item_id}</span>
+          2. Extracts <span class="mm-highlight">item_id = "10"</span>
+          3. Converts → <span class="mm-good">int(10)</span>
+          4. <span class="mm-good">Validates</span>
+          5. <span class="mm-good">Calls function</span>
+          6. <span class="mm-good">Returns JSON</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview Notes -->
+    <div class="interview-card">
+      <div class="interview-card-header">🧠 Interview Notes (Must Remember)</div>
+      <div class="interview-card-body">
+        <ul class="nb-ul">
+          <li>Path parameters create dynamic URLs</li>
+          <li>Defined using <code>{param_name}</code></li>
+          <li>Must match function parameter name</li>
+          <li>Type hints: convert input + validate input</li>
+          <li>FastAPI automatically: handles errors · returns structured response</li>
+          <li>Flask requires manual validation</li>
+        </ul>
+        <div class="mental-model">
+          <span class="mm-highlight">/items/{id}</span>  → dynamic route
+          <span class="mm-highlight">id: int</span>      → validation + conversion
+          invalid       → <span class="mm-good">auto error (422)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Common Mistakes -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔥 Common Mistakes</div>
+      <div class="nb-card-body">
+        <ul class="nb-ul">
+          <li>Parameter name mismatch</li>
+          <li>Forgetting type hints</li>
+          <li>Assuming string instead of int</li>
+          <li>Writing Flask-style <code>&lt;id&gt;</code> in FastAPI</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter6.html" class="chapter-nav-btn">
+        <div class="nav-btn-label">← Previous</div>
+        <div class="nav-btn-title">Path Operations (HTTP Methods)</div>
+      </a>
+      <a href="chapter8.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">Next Chapter →</div>
+        <div class="nav-btn-title">Routing Priority & Order</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🔍 Search Notes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><input type="text" class="search-input" id="search-input" placeholder="Search..." /><div class="search-results" id="search-results"></div></div>
+  </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

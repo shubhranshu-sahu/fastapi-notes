@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 11: Optional Query Parameters — FastAPI Notes</title>
+  <meta name="description" content="Optional Query Parameters in FastAPI — Optional[str]=None, making params optional, conditional logic, search & filter APIs." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header"><h6>📚 Chapters</h6><div class="sidebar-progress">Chapter 11 of 12</div></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link active"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 11</div>
+      <h1>7. Optional Query Parameters</h1>
+      <p class="chapter-subtitle">Optional[str] · None Default · Conditional Logic · Search &amp; Filter APIs</p>
+    </div>
+
+    <!-- Making Parameters Optional -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 1. Making Parameters Optional</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-info">
+          <strong>✅ Concept</strong>
+          If parameter is not always required → make it optional using <code>None</code>
+        </div>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from typing import Optional
+
+@app.get("/items")
+def get_items(name: Optional[str] = None):
+    return {"name": name}</code></pre>
+        </div>
+
+        <h3 class="subsection-title">🧠 Behavior</h3>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-info">
+              <strong>Request: /items (no query)</strong>
+              <p style="margin:0">👉 Output: <code>{"name": null}</code></p>
+              <p style="margin:0">Parameter is absent → <code>None</code> used</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="nb-callout nb-callout-tip">
+              <strong>Request: /items?name=abc</strong>
+              <p style="margin:0">👉 Output: <code>{"name": "abc"}</code></p>
+              <p style="margin:0">Parameter present → value used</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Using None (Core Idea) -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 2. Using None (Core Idea)</div>
+      <div class="nb-card-body">
+        <div class="nb-callout nb-callout-warning">
+          <strong>👉 None means:</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>Parameter may or may not exist</li>
+            <li>FastAPI will not throw error if missing</li>
+          </ul>
+        </div>
+        <h3 class="subsection-title">🔥 Important Insight</h3>
+        <div class="mental-model">
+          name: str              <span class="mm-bad">❌ required</span> (will error if missing)
+          name: str = None       <span class="mm-good">✅ optional</span> (ok if missing)
+          name: Optional[str] = None  <span class="mm-good">✅ explicit optional</span> (preferred)
+        </div>
+      </div>
+    </div>
+
+    <!-- Conditional Logic -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 3. Conditional Logic</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from typing import Optional
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/items")
+def get_items(name: Optional[str] = None):
+
+    if name:
+        return {"message": f"Searching for {name}"}
+
+    return {"message": "Returning all items"}</code></pre>
+        </div>
+        <h3 class="subsection-title">🧠 Real Use</h3>
+        <ul class="nb-ul">
+          <li>Search APIs</li>
+          <li>Filters</li>
+          <li>Conditional queries</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Interview Notes -->
+    <div class="interview-card">
+      <div class="interview-card-header">🧠 Interview Notes (Must Remember)</div>
+      <div class="interview-card-body">
+        <ul class="nb-ul">
+          <li>Use <code>Optional[str] = None</code> for optional params</li>
+          <li><code>None</code> = parameter may not be present</li>
+          <li>FastAPI doesn't error on missing optional params</li>
+          <li>Check <code>if param:</code> for conditional logic</li>
+          <li>Common in search endpoints and filter APIs</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter10.html" class="chapter-nav-btn">
+        <div class="nav-btn-label">← Previous</div>
+        <div class="nav-btn-title">Query Parameters</div>
+      </a>
+      <a href="chapter12.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">Next Chapter →</div>
+        <div class="nav-btn-title">Combining Path + Query Params</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🔍 Search Notes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><input type="text" class="search-input" id="search-input" placeholder="Search..." /><div class="search-results" id="search-results"></div></div>
+  </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

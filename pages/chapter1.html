@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 1: Introduction to FastAPI — FastAPI Notes</title>
+  <meta name="description" content="Introduction to FastAPI — What is FastAPI, why it exists, key features, built on Starlette and Pydantic, real-world use cases." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle" title="Toggle dark mode">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal" title="Search (/)">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header">
+      <h6>📚 Chapters</h6>
+      <div class="sidebar-progress">Chapter 1 of 12</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link active"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 1</div>
+      <h1>1. Introduction to FastAPI</h1>
+      <p class="chapter-subtitle">What is FastAPI · Why it exists · Key Features · Real-World Use Cases</p>
+    </div>
+
+    <!-- CONCEPT -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 Concept</div>
+      <div class="nb-card-body">
+        <p>FastAPI is a modern, high-performance Python web framework used for building APIs with automatic validation, documentation, and async support.</p>
+        <p>It is built on:</p>
+        <ul class="nb-ul">
+          <li><strong>Starlette</strong> → handles web parts (routing, requests, middleware)</li>
+          <li><strong>Pydantic</strong> → handles data validation &amp; parsing</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- EXPLANATION -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🧠 Explanation</div>
+      <div class="nb-card-body">
+        <h3 class="subsection-title">What is FastAPI?</h3>
+        <p>FastAPI is designed to:</p>
+        <ul class="nb-ul">
+          <li>Build APIs quickly</li>
+          <li>Ensure type safety</li>
+          <li>Provide automatic docs</li>
+          <li>Support async programming</li>
+        </ul>
+        <p>It leverages Python <strong>type hints</strong> (very important concept).</p>
+
+        <h3 class="subsection-title">Why FastAPI Exists?</h3>
+        <p>Flask is simple but:</p>
+        <ul class="nb-ul">
+          <li>No built-in validation</li>
+          <li>Manual JSON parsing</li>
+          <li>No automatic docs</li>
+          <li>Limited async support</li>
+        </ul>
+        <p>FastAPI solves all of this:</p>
+        <ul class="nb-ul">
+          <li>Auto validation (via Pydantic)</li>
+          <li>Auto docs (Swagger UI)</li>
+          <li>Async support (via ASGI)</li>
+          <li>Cleaner, structured code</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- KEY FEATURES -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">⚡ Key Features</div>
+      <div class="nb-card-body">
+        <ul class="nb-ul">
+          <li><strong>⚡ Very fast</strong> — comparable to Node.js / Go</li>
+          <li><strong>🧠 Uses type hints</strong> for validation</li>
+          <li><strong>📄 Auto-generated API docs</strong></li>
+          <li><strong>🔁 Async support</strong></li>
+          <li><strong>🔒 Built-in request validation</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- FASTAPI VS FLASK HIGH LEVEL TABLE -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">🔹 FastAPI vs Flask (High-Level)</div>
+      <div class="nb-card-body">
+        <div class="nb-table-wrapper">
+          <table class="nb-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>FastAPI</th>
+                <th>Flask</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Type Checking</td><td><span class="check">✅</span> Built-in</td><td><span class="cross">❌</span> Manual</td></tr>
+              <tr><td>Validation</td><td><span class="check">✅</span> Automatic</td><td><span class="cross">❌</span> Manual</td></tr>
+              <tr><td>Async Support</td><td><span class="check">✅</span> Native</td><td>⚠️ Limited</td></tr>
+              <tr><td>Docs (Swagger)</td><td><span class="check">✅</span> Auto</td><td><span class="cross">❌</span> Need extensions</td></tr>
+              <tr><td>Performance</td><td>⚡ High</td><td>Moderate</td></tr>
+              <tr><td>Learning Curve</td><td>Slightly higher</td><td>Very easy</td></tr>
+              <tr><td>Code Cleanliness</td><td>High</td><td>Medium</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- REAL WORLD USE CASE -->
+    <div class="nb-card">
+      <div class="nb-card-header purple">🔹 Real-World Use Case</div>
+      <div class="nb-card-body">
+        <p>FastAPI is used for:</p>
+        <ul class="nb-ul">
+          <li><strong>AI/ML APIs</strong> (very popular)</li>
+          <li><strong>Microservices</strong></li>
+          <li><strong>Backend for SPAs</strong> (React, Angular)</li>
+          <li><strong>High-performance APIs</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CHAPTER NAVIGATION -->
+    <div class="chapter-nav">
+      <span></span>
+      <a href="chapter2.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">Next Chapter →</div>
+        <div class="nav-btn-title">Installation & First App</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<!-- SEARCH MODAL -->
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">🔍 Search Notes</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="search-input" id="search-input" placeholder="Search chapters, topics, concepts..." />
+        <div class="search-results" id="search-results"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 2: Installation & First App — FastAPI Notes</title>
+  <meta name="description" content="FastAPI Installation — pip install, Uvicorn ASGI server, running your first app, access in browser." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header"><h6>📚 Chapters</h6><div class="sidebar-progress">Chapter 2 of 12</div></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link active"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 2</div>
+      <h1>2. Installation</h1>
+      <p class="chapter-subtitle">pip install · Uvicorn ASGI Server · First Minimal App · Running &amp; Accessing</p>
+    </div>
+
+    <!-- Basic Installation -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 Basic Installation</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <span class="code-lang">bash</span>
+            <button class="copy-btn">📋 Copy</button>
+          </div>
+<pre><code class="language-bash">pip install fastapi</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ASGI Server -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔹 ASGI Server (IMPORTANT)</div>
+      <div class="nb-card-body">
+        <p>FastAPI does <strong>NOT run itself</strong> — it needs an ASGI server:</p>
+        <div class="nb-callout nb-callout-warning">
+          <strong>👉 Install:</strong>
+        </div>
+        <div class="code-wrapper">
+          <div class="code-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <span class="code-lang">bash</span>
+            <button class="copy-btn">📋 Copy</button>
+          </div>
+<pre><code class="language-bash">pip install uvicorn</code></pre>
+        </div>
+        <p class="mt-1">Uvicorn is a lightning-fast ASGI server used to run FastAPI apps.</p>
+      </div>
+    </div>
+
+    <!-- Full Installation -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 Full Installation (Recommended)</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <span class="code-lang">bash</span>
+            <button class="copy-btn">📋 Copy</button>
+          </div>
+<pre><code class="language-bash">pip install "fastapi[all]"</code></pre>
+        </div>
+        <p class="mt-1">This installs:</p>
+        <ul class="nb-ul">
+          <li>Uvicorn</li>
+          <li>Pydantic</li>
+          <li>Email validation</li>
+          <li>Other useful dependencies</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Verify Installation -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 Verify Installation</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <span class="code-lang">bash</span>
+            <button class="copy-btn">📋 Copy</button>
+          </div>
+<pre><code class="language-bash">python -c "import fastapi; print(fastapi.__version__)"</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- First Minimal App -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 First Minimal App</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <span class="code-lang">python</span>
+            <button class="copy-btn">📋 Copy</button>
+          </div>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"message": "Hello FastAPI"}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Run the App -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 Run the App</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <span class="code-lang">bash</span>
+            <button class="copy-btn">📋 Copy</button>
+          </div>
+<pre><code class="language-bash">uvicorn main:app --reload</code></pre>
+        </div>
+        <div class="nb-table-wrapper mt-1" style="margin-top:1rem">
+          <table class="nb-table">
+            <thead><tr><th>Part</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>main</code></td><td>file name (main.py)</td></tr>
+              <tr><td><code>app</code></td><td>FastAPI instance</td></tr>
+              <tr><td><code>--reload</code></td><td>auto restart server on code change</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Access in Browser -->
+    <div class="nb-card">
+      <div class="nb-card-header purple">🔹 Access in Browser</div>
+      <div class="nb-card-body">
+        <ul class="nb-ul">
+          <li><strong>API:</strong> <code>http://127.0.0.1:8000</code></li>
+          <li><strong>Docs (Swagger):</strong> <code>http://127.0.0.1:8000/docs</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Flask vs FastAPI Execution -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">🔹 Flask vs FastAPI (Execution)</div>
+      <div class="nb-card-body">
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">🔵 Flask</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">bash</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-bash">flask run</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">⚡ FastAPI</div>
+            <div class="nb-card-body">
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">bash</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-bash">uvicorn main:app --reload</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nb-callout nb-callout-info mt-1" style="margin-top:1rem">
+          <strong>👉 Key Difference:</strong>
+          <ul class="nb-ul" style="margin-bottom:0">
+            <li>Flask → runs with built-in dev server (WSGI)</li>
+            <li>FastAPI → runs with ASGI server (Uvicorn)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter1.html" class="chapter-nav-btn">
+        <div class="nav-btn-label">← Previous</div>
+        <div class="nav-btn-title">Introduction to FastAPI</div>
+      </a>
+      <a href="chapter3.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">Next Chapter →</div>
+        <div class="nav-btn-title">Flask vs FastAPI</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🔍 Search Notes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><input type="text" class="search-input" id="search-input" placeholder="Search chapters, topics..." /><div class="search-results" id="search-results"></div></div>
+  </div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

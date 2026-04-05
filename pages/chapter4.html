@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 4: Async Programming — FastAPI Notes</title>
+  <meta name="description" content="Asynchronous Programming in Python and FastAPI — sync vs async, await, event loop, asyncio.gather, when to use async." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<nav class="nb-navbar">
+  <button class="nb-btn nb-btn-icon" id="sidebar-toggle">☰</button>
+  <a href="../index.html" class="nb-logo">⚡ <span>Fast</span>API Notes</a>
+  <div class="spacer"></div>
+  <button class="nb-btn nb-btn-icon" id="theme-toggle">🌙</button>
+  <button class="nb-btn nb-btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">🔍</button>
+  <button class="nb-btn nb-btn-accent" id="back-top" style="opacity:0;pointer-events:none;transition:opacity .2s">↑ Top</button>
+</nav>
+<div class="nb-layout">
+  <aside class="nb-sidebar">
+    <div class="sidebar-header"><h6>📚 Chapters</h6><div class="sidebar-progress">Chapter 4 of 12</div></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="sidebar-link"><span class="sidebar-ch-num">🏠</span> Home</a>
+      <a href="chapter1.html" class="sidebar-link"><span class="sidebar-ch-num">1</span> Introduction to FastAPI</a>
+      <a href="chapter2.html" class="sidebar-link"><span class="sidebar-ch-num">2</span> Installation & First App</a>
+      <a href="chapter3.html" class="sidebar-link"><span class="sidebar-ch-num">3</span> Flask vs FastAPI</a>
+      <a href="chapter4.html" class="sidebar-link active"><span class="sidebar-ch-num">4</span> Async Programming</a>
+      <a href="chapter5.html" class="sidebar-link"><span class="sidebar-ch-num">5</span> Creating First App</a>
+      <a href="chapter6.html" class="sidebar-link"><span class="sidebar-ch-num">6</span> Path Operations</a>
+      <a href="chapter7.html" class="sidebar-link"><span class="sidebar-ch-num">7</span> Path Parameters</a>
+      <a href="chapter8.html" class="sidebar-link"><span class="sidebar-ch-num">8</span> Routing Priority</a>
+      <a href="chapter9.html" class="sidebar-link"><span class="sidebar-ch-num">9</span> Enum Parameters</a>
+      <a href="chapter10.html" class="sidebar-link"><span class="sidebar-ch-num">10</span> Query Parameters</a>
+      <a href="chapter11.html" class="sidebar-link"><span class="sidebar-ch-num">11</span> Optional Parameters</a>
+      <a href="chapter12.html" class="sidebar-link"><span class="sidebar-ch-num">12</span> Combining Params</a>
+    </nav>
+  </aside>
+
+  <main class="nb-content">
+    <div class="chapter-header">
+      <div class="chapter-badge">Chapter 4</div>
+      <h1>What is Async (Asynchronous Programming)?</h1>
+      <p class="chapter-subtitle">Sync vs Async · await · Event Loop · asyncio · FastAPI Context</p>
+    </div>
+
+    <!-- Definition -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 Definition</div>
+      <div class="nb-card-body">
+        <p>Asynchronous programming (async) is a way of writing code where a program can start a task and continue executing other tasks without waiting for the first one to finish.</p>
+        <div class="nb-callout nb-callout-info">
+          <strong>👉 In simple words:</strong>
+          <p style="margin-bottom:0;font-style:italic;font-size:1.05rem">"Don't wait — move on, and come back when the result is ready."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sync vs Async -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 Synchronous vs Asynchronous (Core Idea)</div>
+      <div class="nb-card-body">
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">🧱 Synchronous (Blocking)</div>
+            <div class="nb-card-body">
+              <p>Tasks execute one after another. Each task must finish before the next starts.</p>
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">def task():
+    data = fetch_from_db()   # waits here
+    process(data)            # runs after fetch completes</code></pre>
+              </div>
+              <div class="nb-callout nb-callout-danger" style="margin-top:.75rem">
+                <strong>👉 Problem:</strong>
+                CPU sits idle while waiting (waste of time)
+              </div>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">⚡ Asynchronous (Non-Blocking)</div>
+            <div class="nb-card-body">
+              <p>Tasks can run independently. While waiting, program does other work.</p>
+              <div class="code-wrapper">
+                <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">async def task():
+    data = await fetch_from_db()  # doesn't block entire program
+    process(data)</code></pre>
+              </div>
+              <div class="nb-callout nb-callout-tip" style="margin-top:.75rem">
+                <strong>👉 Key idea:</strong>
+                <code>await</code> → pause THIS function, not the whole program
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Real-Life Analogy -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 Real-Life Analogy ☕</div>
+      <div class="nb-card-body">
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">☕ Synchronous</div>
+            <div class="nb-card-body">
+              <ul class="nb-ul"><li>Order coffee</li><li>Stand there doing nothing</li><li>Wait until ready</li></ul>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">⚡ Asynchronous</div>
+            <div class="nb-card-body">
+              <ul class="nb-ul"><li>Order coffee</li><li>Sit and work on laptop</li><li>Get notified when ready</li></ul>
+            </div>
+          </div>
+        </div>
+        <div class="nb-callout nb-callout-tip mt-1" style="margin-top:1rem">
+          <strong>👉 That's async = better utilization of time</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Why Async Exists -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">🔹 Why Async Exists</div>
+      <div class="nb-card-body">
+        <p>Async is useful when tasks involve:</p>
+        <ul class="nb-ul">
+          <li>Network calls (APIs)</li>
+          <li>Database queries</li>
+          <li>File I/O</li>
+          <li>External services (like LLM APIs)</li>
+        </ul>
+        <div class="nb-callout nb-callout-info">
+          <strong>👉 These are called I/O-bound operations</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Keywords -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 Key Keywords in Python Async</div>
+      <div class="nb-card-body">
+        <h3 class="subsection-title">1. <code>async def</code></h3>
+        <p>Defines an asynchronous function</p>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">async def fetch_data():
+    return "data"</code></pre>
+        </div>
+
+        <h3 class="subsection-title">2. <code>await</code></h3>
+        <p>Waits for result without blocking entire program</p>
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">result = await fetch_data()</code></pre>
+        </div>
+
+        <h3 class="subsection-title">3. Event Loop (Concept)</h3>
+        <ul class="nb-ul">
+          <li>Manages execution of async tasks</li>
+          <li>Switches between tasks efficiently</li>
+        </ul>
+        <div class="nb-callout nb-callout-info">
+          <strong>👉 FastAPI uses this internally via ASGI</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 1: Without Async -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔹 Example 1: Without Async (Blocking)</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">import time
+
+def fetch_data():
+    time.sleep(3)
+    return "data"
+
+def main():
+    print(fetch_data())
+    print(fetch_data())
+
+main()</code></pre>
+        </div>
+        <div class="nb-callout nb-callout-danger mt-1" style="margin-top:.75rem">
+          <strong>⏱ Total time = 6 seconds</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 2: With Async -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">🔹 Example 2: With Async (Non-Blocking)</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">import asyncio
+
+async def fetch_data():
+    await asyncio.sleep(3)
+    return "data"
+
+async def main():
+    task1 = fetch_data()
+    task2 = fetch_data()
+
+    results = await asyncio.gather(task1, task2)
+    print(results)</code></pre>
+        </div>
+        <div class="nb-callout nb-callout-tip mt-1" style="margin-top:.75rem">
+          <strong>⏱ Total time = 3 seconds</strong>
+          <p style="margin-bottom:0">👉 Both tasks run concurrently</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FastAPI Example -->
+    <div class="nb-card">
+      <div class="nb-card-header yellow">🔹 FastAPI Example (Important)</div>
+      <div class="nb-card-body">
+        <div class="code-wrapper">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">python</span><button class="copy-btn">📋 Copy</button></div>
+<pre><code class="language-python">from fastapi import FastAPI
+import asyncio
+
+app = FastAPI()
+
+@app.get("/")
+async def home():
+    await asyncio.sleep(2)
+    return {"message": "Hello"}</code></pre>
+        </div>
+        <div class="nb-callout nb-callout-tip mt-1" style="margin-top:.75rem">
+          <strong>👉 While one request is waiting:</strong>
+          FastAPI can handle other requests
+        </div>
+      </div>
+    </div>
+
+    <!-- Flask vs FastAPI Async Context -->
+    <div class="nb-card">
+      <div class="nb-card-header orange">🔥 Flask vs FastAPI (Async Context)</div>
+      <div class="nb-card-body">
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">🔵 Flask</div>
+            <div class="nb-card-body">
+              <ul class="nb-ul">
+                <li>Uses WSGI</li>
+                <li>Mostly synchronous</li>
+                <li>One request per worker (blocking)</li>
+              </ul>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">⚡ FastAPI</div>
+            <div class="nb-card-body">
+              <ul class="nb-ul">
+                <li>Uses ASGI</li>
+                <li>Supports async natively</li>
+                <li>Can handle multiple requests efficiently</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- When Async Helps -->
+    <div class="nb-card">
+      <div class="nb-card-header blue">🔹 When Async Helps (Very Important)</div>
+      <div class="nb-card-body">
+        <div class="nb-compare">
+          <div class="nb-compare-box">
+            <div class="nb-compare-label fastapi">✅ Use Async When:</div>
+            <div class="nb-card-body">
+              <ul class="nb-ul">
+                <li>Calling external APIs (like Gemini, OpenAI)</li>
+                <li>Database queries</li>
+                <li>File uploads/downloads</li>
+                <li>Web scraping</li>
+              </ul>
+            </div>
+          </div>
+          <div class="nb-compare-box">
+            <div class="nb-compare-label flask">❌ Avoid Async When:</div>
+            <div class="nb-card-body">
+              <ul class="nb-ul">
+                <li>CPU-heavy tasks (e.g., ML training)</li>
+                <li>Pure calculations</li>
+              </ul>
+              <div class="nb-callout nb-callout-warning">
+                <strong>👉 For CPU tasks → use multiprocessing instead</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview  -->
+    <div class="interview-card">
+      <div class="interview-card-header">🧠 Interview-Level Explanation</div>
+      <div class="interview-card-body">
+        <p>If asked: <strong>"What is async in Python?"</strong></p>
+        <div class="mental-model">
+          <span class="mm-highlight">Asynchronous programming</span> allows a program to handle multiple tasks concurrently without blocking execution.
+          It is especially useful for I/O-bound operations like API calls or database queries.
+          
+          In Python, we use <span class="mm-good">async def</span> to define coroutines and <span class="mm-good">await</span> to pause
+          execution without blocking the event loop. FastAPI leverages this through ASGI
+          to serve many requests concurrently with a single thread.
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Takeaways -->
+    <div class="nb-card">
+      <div class="nb-card-header teal">⚡ Key Takeaways</div>
+      <div class="nb-card-body">
+        <ul class="nb-ul">
+          <li><strong>Async</strong> = non-blocking execution</li>
+          <li><code>await</code> pauses function, not program</li>
+          <li>Best for I/O-bound tasks</li>
+          <li>FastAPI uses async → better performance</li>
+          <li>Flask is mostly sync → less efficient under load</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Mental Shift -->
+    <div class="nb-card">
+      <div class="nb-card-header red">🔥 Important Mental Shift</div>
+      <div class="nb-card-body">
+        <div class="mental-model">
+          <span class="mm-comment">In Flask:</span>
+          One request = one worker = <span class="mm-bad">blocking</span>
+          
+          <span class="mm-comment">In FastAPI:</span>
+          One request can pause → <span class="mm-good">other requests continue</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter3.html" class="chapter-nav-btn">
+        <div class="nav-btn-label">← Previous</div>
+        <div class="nav-btn-title">Flask vs FastAPI</div>
+      </a>
+      <a href="chapter5.html" class="chapter-nav-btn next">
+        <div class="nav-btn-label">Next Chapter →</div>
+        <div class="nav-btn-title">Creating First FastAPI App</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade nb-modal" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🔍 Search Notes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><input type="text" class="search-input" id="search-input" placeholder="Search..." /><div class="search-results" id="search-results"></div></div>
+  </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>
